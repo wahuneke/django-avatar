@@ -18,6 +18,7 @@ except ImportError:
 
 from avatar import AVATAR_STORAGE_DIR, AVATAR_RESIZE_METHOD
 
+
 def avatar_file_path(instance=None, filename=None, user=None):
     user = user or instance.user
     return os.path.join(AVATAR_STORAGE_DIR, user.username, filename)
@@ -31,12 +32,13 @@ class Avatar(models.Model):
     def __unicode__(self):
         return _(u'Avatar for %s') % self.user
     
-    def save(self, force_insert=False, force_update=False):
+    def save(self, *args, **kwargs):
         if self.primary:
-            avatars = Avatar.objects.filter(user=self.user, primary=True)\
-                .exclude(id=self.id)
+            avatars = Avatar.objects.filter(user=self.user, primary=True)
+            if self.pk:
+                avatars = avatars.exclude(pk=self.pk)
             avatars.update(primary=False)
-        super(Avatar, self).save(force_insert, force_update)
+        super(Avatar, self).save(*args, **kwargs)
     
     def thumbnail_exists(self, size):
         return self.avatar.storage.exists(self.avatar_name(size))
