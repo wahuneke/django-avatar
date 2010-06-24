@@ -1,3 +1,14 @@
+1.0.6
+-----
+
+ * bugfix: Do significantly fewer SQL queries when using the templatetags.
+
+1.0.5
+-----
+
+ * bugfix: accept the new using parameter to save() on Models, by passing
+   through all arguments, and keyword arguments
+
 1.0.4
 -----
 
