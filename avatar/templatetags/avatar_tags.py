@@ -23,9 +23,14 @@ register = template.Library()
 @cache_result()
 @register.simple_tag
 def avatar_url(user, size=settings.AVATAR_DEFAULT_SIZE):
-    avatar = get_primary_avatar(user, size=size)
-    if avatar:
-        return avatar.avatar_url(size)
+    try:
+        avatar = get_primary_avatar(user, size=size)
+        if avatar:
+            return avatar.avatar_url(size)
+    except Exception:
+        # Any error getting primary should fall through to backup plan or default
+        # This is here so that errors on S3 don't result in 500 errors for the whole page
+        pass
 
     if settings.AVATAR_GRAVATAR_BACKUP:
         params = {'s': str(size)}
